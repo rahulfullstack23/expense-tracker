@@ -1,5 +1,5 @@
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Welcome() {
   const navigate = useNavigate();
@@ -14,6 +14,10 @@ export default function Welcome() {
       <h1>Welcome to Expense Tracker</h1>
       <p>You have successfully logged in!</p>
       <button onClick={handleLogout}>Logout</button>
+      <p>
+        Your profile is incomplete.{" "}
+        <Link to="/complete-profile">Complete now</Link>.
+      </p>
     </div>
   );
 }
