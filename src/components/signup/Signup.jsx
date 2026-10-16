@@ -1,16 +1,19 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 const Signup = () => {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const email = e.target[0].value;
-    const password = e.target[1].value;
-    const confirmPassword = e.target[2].value;
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value;
+    const confirmPassword = e.target.confirmPassword.value;
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
@@ -40,10 +43,13 @@ const Signup = () => {
       }
 
       console.log("User has successfully signed up.");
-      setError("Signup successful!");
-      e.target.reset();
+      alert("Signup successful!");
+      navigate("/login");
     } catch (err) {
-      setError(err.message);
+      setError(err.message === "EMAIL_EXISTS"
+          ? "Email already registered. Please log in."
+          : err.message.replaceAll("_", " ")
+        );
     }
   };
 
@@ -52,12 +58,20 @@ const Signup = () => {
       <h1>SignUp</h1>
 
       <form className="signup-form" onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" required />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          autoComplete="email"
+          required
+        />
         <br /><br />
 
         <input
           type="password"
+          name="password"
           placeholder="Password"
+          autoComplete="new-password"
           minLength={6}
           required
         />
@@ -65,7 +79,9 @@ const Signup = () => {
 
         <input
           type="password"
+          name="confirmPassword"
           placeholder="Confirm password"
+          autoComplete="new-password"
           required
         />
         <br /><br />
@@ -76,7 +92,7 @@ const Signup = () => {
       {error && <p>{error}</p>}
 
       <p>
-        Already have an account? <a href="/login">Login</a>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );
