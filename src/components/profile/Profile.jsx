@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileHeader from "./ProfileHeader";
 import "./Profile.css";
@@ -11,6 +11,53 @@ const CompleteProfile = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first.");
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyD13Pm_A6P3YZ8B3lM8n5i_D2rDu5IGG74`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              idToken: token,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Failed to fetch user data");
+        }
+
+        if (data.users && data.users.length > 0) {
+          const user = data.users[0];
+          if (user.displayName) setFullName(user.displayName);
+          if (user.photoUrl) setPhotoUrl(user.photoUrl);
+
+          if (user.displayName && user.photoUrl) {
+            localStorage.setItem("profileCompleted", "true");
+          }
+        }
+      } catch (error) {
+        setMessage(error.message.replaceAll("_", " "));
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
