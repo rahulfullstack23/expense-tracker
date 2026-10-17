@@ -1,8 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Profile.css";
 
 const ProfileHeader = () => {
   const completed = localStorage.getItem("profileCompleted") === "true";
+const navigate = useNavigate();
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("profileCompleted");
+  navigate("/login");
+}
 
   return (
     <div className="profile-header-bar">
@@ -19,6 +26,9 @@ const ProfileHeader = () => {
           </Link>
         </div>
       )}
+      <button onClick={handleLogout} className="btn-logout">
+        Logout
+      </button>
     </div>
   );
 };
