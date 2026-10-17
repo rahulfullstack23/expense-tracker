@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ProfileHeader from "./ProfileHeader";
 import "./Profile.css";
 
@@ -8,6 +8,7 @@ import "./Profile.css";
 const CompleteProfile = () => {
   const [fullName, setFullName] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [emailVerified, setEmailVerified] = useState(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ const CompleteProfile = () => {
 
         if (data.users && data.users.length > 0) {
           const user = data.users[0];
+          setEmailVerified(Boolean(user.emailVerified));
           if (user.displayName) setFullName(user.displayName);
           if (user.photoUrl) setPhotoUrl(user.photoUrl);
 
@@ -111,6 +113,15 @@ const CompleteProfile = () => {
   return (
     <div className="profile-wrapper">
       <ProfileHeader />
+
+      {emailVerified === false && (
+        <div className="verification-banner" style={{ marginTop: "15px" }}>
+          <p>Your email address is unverified.</p>
+          <Link to="/verify-email" className="complete-link">
+            Go to Email Verification
+          </Link>
+        </div>
+      )}
 
       <main className="form-main-container">
         <form onSubmit={handleUpdate} className="profile-form">
